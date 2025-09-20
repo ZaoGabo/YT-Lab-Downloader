@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YT-Lab Downloader — Interfaz educativa</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="container">
+    <h1>YT-Lab Downloader</h1>
+    <p class="lead">Introduce la URL del video y presiona <strong>Descargar</strong>. Esta interfaz es solo con fines educativos.</p>
+
+    <form id="download-form">
+      <label for="url">URL del video</label>
+      <input id="url" name="url" type="url" placeholder="https://www.youtube.com/watch?v=..." required>
+
+      <div class="actions">
+        <button id="download-btn" type="submit">Descargar</button>
+        <div id="spinner" class="spinner" aria-hidden="true"></div>
+      </div>
+
+      <p id="status" class="status" aria-live="polite"></p>
+    </form>
+
+    <section id="history" class="history">
+      <h2>Descargas recientes</h2>
+      <ul id="history-list">
+        <li class="muted">No hay descargas todavía.</li>
+      </ul>
+    </section>
+
+    <footer class="foot">YT-Lab Downloader — proyecto educativo. No desplegar sin revisar implicaciones legales.</footer>
+  </main>
+
+<script>
+const form = document.getElementById('download-form');
+const status = document.getElementById('status');
+const spinner = document.getElementById('spinner');
+const btn = document.getElementById('download-btn');
+const historyList = document.getElementById('history-list');
+
+function setLoading(loading) {
+  btn.disabled = loading;
+  spinner.style.display = loading ? 'inline-block' : 'none';
+}
+
+function addToHistory(filename) {
+  const li = document.createElement('li');
+  li.textContent = filename + ' — ' + new Date().toLocaleString();
+  if (historyList.querySelector('.muted')) historyList.innerHTML = '';
+  historyList.prepend(li);
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const url = document.getElementById('url').value.trim();
+  if (!url) return;
+
+  status.textContent = 'Iniciando descarga...';
+  setLoading(true);
+
+  try {
+    const resp = await fetch('/download', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ url })
+    });
+
+    if (!resp.ok) {
+      const txt = await resp.text();
+      throw new Error('Servidor respondió con error: ' + resp.status + ' — ' + txt);
+    }
+
+    const disposition = resp.headers.get('Content-Disposition') || '';
+    let filename = 'video';
+    const match = /filename\\*=UTF-8''([^;\\n]+)/i.exec(disposition) || /filename=\"?([^\";]+)\"?/i.exec(disposition);
+    if (match && match[1]) filename = decodeURIComponent(match[1]);
+
+    const blob = await resp.blob();
+    const blobUrl = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(blobUrl);
+
+    status.textContent = 'Descarga completada: ' + filename;
+    addToHistory(filename);
+  } catch (err) {
+    console.error(err);
+    status.textContent = 'Error: ' + err.message;
+  } finally {
+    setLoading(false);
+  }
+});
+</script>
+</body>
+</html>

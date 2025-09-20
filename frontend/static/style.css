@@ -1,0 +1,28 @@
+:root{
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --accent: #2b6ef6;
+  --muted: #6b7280;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+body{background:var(--bg);display:flex;align-items:center;justify-content:center;padding:2rem}
+.container{width:100%;max-width:760px;background:var(--card);padding:2rem;border-radius:12px;box-shadow:0 6px 20px rgba(11,22,60,0.08)}
+h1{margin:0 0 .25rem}
+.lead{margin:0 0 1.25rem;color:var(--muted)}
+form{display:block}
+label{display:block;margin-bottom:.5rem;font-weight:600}
+input[type="url"]{width:100%;padding:.75rem 1rem;border-radius:8px;border:1px solid #e6e9ef;font-size:1rem;margin-bottom:1rem}
+.actions{display:flex;align-items:center;gap:.75rem}
+button{background:var(--accent);color:white;border:none;padding:.6rem .9rem;border-radius:8px;font-weight:600;cursor:pointer}
+button:disabled{opacity:.6;cursor:default}
+.spinner{width:20px;height:20px;border:3px solid rgba(0,0,0,0.08);border-top-color:rgba(0,0,0,0.3);border-radius:50%;display:none;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.status{margin-top:1rem;color:var(--muted)}
+.history{margin-top:1.5rem}
+.history h2{margin:.5rem 0}
+.history ul{list-style:none;padding:0;margin:0}
+.history li{padding:.35rem 0;border-bottom:1px dashed #eee}
+.muted{color:var(--muted)}
+.foot{margin-top:1.5rem;color:var(--muted);font-size:.85rem}
+
