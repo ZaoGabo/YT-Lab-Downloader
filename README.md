@@ -1,3 +1,6 @@
+> 🌐 Este README está disponible en:
+> [English version](README.en.md)
+
 # 🎥 YT-Lab Downloader
 
 **YT-Lab Downloader** es un proyecto experimental y educativo que permite descargar videos desde YouTube mediante una interfaz web sencilla. Está diseñado para explorar la integración entre frontend y backend usando Flask y `yt-dlp`, con énfasis en buenas prácticas, modularidad y responsabilidad legal.
